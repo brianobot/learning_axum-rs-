@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 
 use axum::{ routing::get, Router };
+use serde_json::{json, Value};
 
 #[tokio::main]
 async fn main() {
@@ -13,6 +14,10 @@ async fn main() {
         .route("/hello_status", get(hello_status))
         .route("/demo.png", get(get_demo_png))
         .route("/demo.html", get(html_handler))
+        .route("/demo_json", 
+            get(get_demo_json)
+            .put(put_demo_json)
+        )
         .route("/items", get(get_items))
         .route("/items/{id}", get(extract_path_parameter));
 
@@ -84,4 +89,14 @@ async fn extract_path_parameter(axum::extract::Path(id): axum::extract::Path<Str
 
 async fn get_items(axum::extract::Query(query): axum::extract::Query<HashMap<String, String>>) -> String {
     format!("Query = {:?}", query)
+}
+
+
+async fn get_demo_json() -> axum::extract::Json<Value> {
+    json!({"message": "Hello World!"}).into()
+}
+
+
+async fn put_demo_json(axum::extract::Json(data): axum::extract::Json<serde_json::Value>) -> axum::extract::Json<Value> {
+    json!({"detail": "success", "data": data}).into()
 }
