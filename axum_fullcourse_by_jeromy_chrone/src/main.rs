@@ -1,5 +1,6 @@
 use axum::{extract::{Path, Query}, http::StatusCode, middleware, response::{Html, IntoResponse, Response}, routing::get, Router};
 use serde::{Deserialize, Serialize};
+use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
 
 mod error;
@@ -45,6 +46,7 @@ async fn main() {
         .fallback_service(route_static())
         .merge(route_hello()) // this allow us to merge routes to a route
         .merge(web::login_routes::routes())
+        .layer(CookieManagerLayer::new())
         .layer(middleware::map_response(main_response_mapper));
         // the layers are applied from both to top
         // so if you want some routes to be affect by a layout
