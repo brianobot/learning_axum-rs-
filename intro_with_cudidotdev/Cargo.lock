@@ -250,6 +250,8 @@ name = "intro_with_cudidotdev"
 version = "0.1.0"
 dependencies = [
  "axum",
+ "serde",
+ "serde_json",
  "tokio",
 ]
 
