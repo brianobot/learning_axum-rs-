@@ -25,6 +25,7 @@ sudo -u postgres psql
 ```
 
 ### With sqlx cli
+[Read here](https://mo8it.com/blog/sqlx-interacting-with-databases-in-rust/)
 
 1. Create database (Ensure the database url exist in the environment)
     ```bash
@@ -62,4 +63,27 @@ sudo -u postgres psql
 State is a Way to share a Data Structure among handlers in an Axum project.
 Since each handler runs in it own async context, the data structure must be wrapped in an Arc to avoid
 duplicates when each handlers uses the state the data
+
+
+### SQLX Query Structure
+The sqlx query follows this structure
+
+sqlx::<query_method/query_macro>
+    .<optional_method bind only used with query methods not the macros> e.g bind
+    .<executor>(&pool)
+    .await
+    .unwrap()
+
+Examples of the executor are
+- fetch, fetch_one, fetch_all, execute
+
+Note
+A struct doesn't have to derive sqlx::FromRow for using the macro query_as!.
+
+### Embedded migration
+use the following code to run migration automatically when the binary is ran
+sqlx::migrate!()
+    .run(&pool)
+    .await
+    .unwrap();
 
