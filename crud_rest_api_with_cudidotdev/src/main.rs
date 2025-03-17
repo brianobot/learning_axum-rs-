@@ -36,6 +36,11 @@ async fn main() {
         .connect(&database_url).await
         .expect("Failed to connect to the database!");
 
+    sqlx::migrate!()
+        .run(&db_pool)
+        .await
+        .expect("Failed to run migrations!");
+
     println!("✅ Connected to Database!");
 
     // compose  route 
