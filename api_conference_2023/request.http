@@ -1,0 +1,30 @@
+@host = http://localhost:3000
+
+
+### 
+GET {{host}}/
+
+###
+POST {{host}}/ 
+
+### 
+GET {{host}}/greet/Batman
+
+### 
+GET {{host}}/greet/
+
+### 
+POST {{host}}/greet/body
+Content-Type: application/json
+
+{
+    "page": 10,
+    "page_size": 20,
+    "limit": "String"
+}
+
+###
+GET {{host}}/ping
+
+###
+GET {{host}}/kingkong/king
