@@ -19,3 +19,6 @@ affect the entire web application.
 ### Inventing the Service Trait
 [Blog Post](https://tokio.rs/blog/2021-05-14-inventing-the-service-trait)
 
+Notes
+Every Axum handler fundamentally get turns into a Tower Service
+
