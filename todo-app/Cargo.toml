@@ -1,0 +1,9 @@
+[package]
+name = "todo-app"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.1"
+sqlx = { version = "0.8.3", features = ["runtime-tokio-native-tls", "sqlite"] }
+tokio = { version = "1.44.1", features = ["full"] }
