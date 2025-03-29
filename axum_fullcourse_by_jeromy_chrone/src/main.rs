@@ -1,20 +1,25 @@
-use axum::{extract::{Path, Query}, http::StatusCode, middleware, response::{Html, IntoResponse, Response}, routing::get, Router};
+use axum::{
+    Router,
+    extract::{Path, Query},
+    http::StatusCode,
+    middleware,
+    response::{Html, IntoResponse, Response},
+    routing::get,
+};
 use serde::{Deserialize, Serialize};
 use tower_cookies::CookieManagerLayer;
 use tower_http::services::ServeDir;
 
-mod model;
 mod error;
+mod model;
 mod web;
 
 pub use self::error::{Error, Result};
 
 type NormalResult<T, E> = std::result::Result<T, E>;
 
-
 fn route_hello() -> Router {
-    Router::new()
-        .route("/hello", get(hello_handler))
+    Router::new().route("/hello", get(hello_handler))
 }
 
 fn route_static() -> Router {
@@ -22,7 +27,6 @@ fn route_static() -> Router {
         // nest service is used to serve directories instead of regular Response
         .nest_service("/asset", ServeDir::new("./"))
 }
-
 
 // this here is a middleware, it takes a response and return a response
 // TODO: issue with middleware not working Found the Solution to this
@@ -49,15 +53,14 @@ async fn main() {
         .merge(web::login_routes::routes())
         .layer(CookieManagerLayer::new())
         .layer(middleware::map_response(main_response_mapper));
-        // the layers are applied from both to top
-        // so if you want some routes to be affect by a layout
-        // those routes must be defined above the layer
-    
+    // the layers are applied from both to top
+    // so if you want some routes to be affect by a layout
+    // those routes must be defined above the layer
+
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000").await.unwrap();
     println!("🚀 LISTENING on localhost:3000");
     axum::serve(listener, app).await.unwrap();
 }
-
 
 async fn ok_handler() -> NormalResult<(StatusCode, String), (StatusCode, String)> {
     // this returns a 200 response even when i expected an error response
@@ -65,7 +68,6 @@ async fn ok_handler() -> NormalResult<(StatusCode, String), (StatusCode, String)
     // Err(format!("BAD REQUEST"));
     Err((StatusCode::BAD_REQUEST, String::from("Hello World!")))
 }
-
 
 async fn plain_handler() {
     ()
@@ -82,20 +84,18 @@ async fn hello_handler(Query(query): Query<HelloParams>) -> impl IntoResponse {
     println!("->> {:<12?} - query", query);
 
     let name = query.name.as_deref().unwrap_or("World");
-    Html(format!("Hello <strong>{name}</strong>" ))
+    Html(format!("Hello <strong>{name}</strong>"))
 }
-
 
 async fn hello2_handler(Path(name): Path<String>) -> impl IntoResponse {
     println!("->> {:<12} - hello2 handler", "HANDLER");
-    
+
     Html(format!("Hello {name}"))
 }
 
 async fn razzy_handler(Path(id): Path<String>) -> impl IntoResponse {
     format!("Razzy: {id}")
 }
-
 
 async fn complex_handler() -> (StatusCode, String) {
     (StatusCode::CONFLICT, format!("Conflict"))
