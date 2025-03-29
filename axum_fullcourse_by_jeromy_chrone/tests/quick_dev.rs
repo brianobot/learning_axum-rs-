@@ -2,7 +2,6 @@
 
 use anyhow::Result;
 
-
 #[tokio::test]
 async fn quick_dev() -> Result<()> {
     let client = httpc_test::new_client("http://localhost:3000")?;

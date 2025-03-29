@@ -1,7 +1,7 @@
 use axum::{
-    routing::{get, post},
-    http::StatusCode,
     Json, Router,
+    http::StatusCode,
+    routing::{get, post},
 };
 use serde::{Deserialize, Serialize};
 

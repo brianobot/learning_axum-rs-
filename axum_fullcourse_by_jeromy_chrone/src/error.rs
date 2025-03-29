@@ -4,14 +4,11 @@ pub type Result<T> = core::result::Result<T, Error>;
 
 #[derive(Debug)]
 pub enum Error {
-    LoginFail
+    LoginFail,
 }
 
 impl IntoResponse for Error {
     fn into_response(self) -> axum::response::Response {
-        (
-            StatusCode::INTERNAL_SERVER_ERROR, 
-            "UNHANDLED CLIENT ERROR"
-        ).into_response()
+        (StatusCode::INTERNAL_SERVER_ERROR, "UNHANDLED CLIENT ERROR").into_response()
     }
 }

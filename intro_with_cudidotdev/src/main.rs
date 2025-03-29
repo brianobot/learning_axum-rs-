@@ -1,6 +1,11 @@
-use axum::{body::Body, http::{Response, StatusCode}, response::IntoResponse, routing::{get, post}, Json, Router};
+use axum::{
+    Json, Router,
+    body::Body,
+    http::{Response, StatusCode},
+    response::IntoResponse,
+    routing::{get, post},
+};
 use serde::Serialize;
-
 
 #[tokio::main]
 async fn main() {
@@ -18,17 +23,21 @@ async fn main() {
 
 #[derive(Serialize, Debug)]
 struct User {
-    email: String
+    email: String,
 }
 
 // when returning  a tuple with status code and string
 // the status code must be the first item in the tuple
 async fn hello() -> (StatusCode, Json<User>) {
-    (StatusCode::CREATED, Json(User { email: "brianobot9@gmail.com".into() }))
+    (
+        StatusCode::CREATED,
+        Json(User {
+            email: "brianobot9@gmail.com".into(),
+        }),
+    )
 }
 
-
-// here we have more fine grain control over the creation of the response 
+// here we have more fine grain control over the creation of the response
 async fn hello2() -> impl IntoResponse {
     Response::builder()
         .status(StatusCode::CREATED)

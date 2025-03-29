@@ -1,13 +1,18 @@
-use axum::{extract::{State, Path}, http::StatusCode, response::IntoResponse, routing::get, Json, Router};
-use sqlx::{migrate::MigrateDatabase, prelude::FromRow, Pool, Sqlite};
+use axum::{
+    Json, Router,
+    extract::{Path, State},
+    http::StatusCode,
+    response::IntoResponse,
+    routing::get,
+};
 use serde::{Deserialize, Serialize};
+use sqlx::{Pool, Sqlite, migrate::MigrateDatabase, prelude::FromRow};
 
 use log::info;
 use tower_http::trace::TraceLayer;
 // use tracing_subscriber::EnvFilter;
 
 const DB_URL: &str = "sqlite://sqlite.db";
-
 
 #[tokio::main]
 async fn main() {
@@ -40,8 +45,14 @@ async fn main() {
         .route("/", get(home))
         .route("/todos", get(list_todos).post(create_todos))
         .route("/todos/", get(list_todos).post(create_todos))
-        .route("/todos/{todo_id}", get(get_todo).patch(update_todo).delete(delete_todo))
-        .route("/todos/{todo_id}/", get(get_todo).patch(update_todo).delete(delete_todo))
+        .route(
+            "/todos/{todo_id}",
+            get(get_todo).patch(update_todo).delete(delete_todo),
+        )
+        .route(
+            "/todos/{todo_id}/",
+            get(get_todo).patch(update_todo).delete(delete_todo),
+        )
         .layer(TraceLayer::new_for_http())
         .with_state(pool);
 
@@ -50,14 +61,12 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-
 #[derive(Debug, FromRow, Serialize)]
 struct Todo {
     id: i32,
     name: String,
     description: Option<String>,
 }
-
 
 async fn home() -> impl IntoResponse {
     "Home"
@@ -78,7 +87,10 @@ struct CreateTodo {
     description: Option<String>,
 }
 
-async fn create_todos(State(pool): State<Pool<Sqlite>>, Json(payload): Json<CreateTodo>) -> (StatusCode, impl IntoResponse) {
+async fn create_todos(
+    State(pool): State<Pool<Sqlite>>,
+    Json(payload): Json<CreateTodo>,
+) -> (StatusCode, impl IntoResponse) {
     let query_result = sqlx::query("INSERT INTO todos (name, description) VALUES ($1, $2)")
         .bind(payload.name.clone())
         .bind(payload.description.clone())
@@ -90,7 +102,6 @@ async fn create_todos(State(pool): State<Pool<Sqlite>>, Json(payload): Json<Crea
     (StatusCode::CREATED, Json(payload))
 }
 
-
 async fn get_todo(Path(todo_id): Path<i32>, State(pool): State<Pool<Sqlite>>) -> impl IntoResponse {
     let todo: Todo = sqlx::query_as("SELECT * FROM todos where id = $1")
         .bind(todo_id)
@@ -101,14 +112,17 @@ async fn get_todo(Path(todo_id): Path<i32>, State(pool): State<Pool<Sqlite>>) ->
     Json(todo)
 }
 
-
 #[derive(Debug, FromRow, Serialize, Deserialize)]
 struct UpdateTodo {
     name: Option<String>,
-    description: Option<String>
+    description: Option<String>,
 }
 
-async fn update_todo(Path(todo_id): Path<i32>, State(pool): State<Pool<Sqlite>>, Json(payload): Json<UpdateTodo>) -> impl IntoResponse {
+async fn update_todo(
+    Path(todo_id): Path<i32>,
+    State(pool): State<Pool<Sqlite>>,
+    Json(payload): Json<UpdateTodo>,
+) -> impl IntoResponse {
     let todo: UpdateTodo = sqlx::query_as("SELECT * FROM todos where id = $1")
         .bind(todo_id)
         .fetch_one(&pool)
@@ -126,7 +140,10 @@ async fn update_todo(Path(todo_id): Path<i32>, State(pool): State<Pool<Sqlite>>,
     StatusCode::ACCEPTED
 }
 
-async fn delete_todo(Path(todo_id): Path<i32>, State(pool): State<Pool<Sqlite>>) -> impl IntoResponse {
+async fn delete_todo(
+    Path(todo_id): Path<i32>,
+    State(pool): State<Pool<Sqlite>>,
+) -> impl IntoResponse {
     sqlx::query("DELETE FROM todos WHERE id = $1")
         .bind(todo_id)
         .execute(&pool)

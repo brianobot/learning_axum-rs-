@@ -1,5 +1,5 @@
 [package]
-name = "api_conference_2023"
+name = "building_web_apis_an_intro"
 version = "0.1.0"
 edition = "2024"
 
@@ -7,7 +7,5 @@ edition = "2024"
 axum = "0.8.1"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
+sqlx = { version = "0.8.3", features = ["postgres", "runtime-tokio", "tls-native-tls"] }
 tokio = { version = "1.44.1", features = ["full"] }
-tower = { version = "0.5.2", features = ["util", "timeout"] }
-tower-http = { version = "0.6.2", features = ["add-extension"] }
-tracing = "0.1.41"

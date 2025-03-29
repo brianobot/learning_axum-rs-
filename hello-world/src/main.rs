@@ -1,18 +1,16 @@
-use axum::{routing::get, Router};
 use axum::response::Json;
+use axum::{Router, routing::get};
 
+use serde_json::{Value, json};
 use tracing::info;
 use tracing_subscriber;
-use serde_json::{json, Value};
 
 #[tokio::main]
 async fn main() {
-    tracing_subscriber::fmt()
-        .compact()
-        .init();
+    tracing_subscriber::fmt().compact().init();
 
     let app = Router::<()>::new()
-        .route("/", get(hello)) 
+        .route("/", get(hello))
         // each route has some number of functions that relate to a http request verb
         // for multiple verbs chain those functions with the dot notation on the previous supported verbs
         // route("/blogs", get(blog).post(blog))
@@ -24,12 +22,10 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-
 // whatever our handler function produces as output needs to implement the IntoResponse Trait
 async fn hello() -> &'static str {
     "Hello world!"
 }
-
 
 async fn bye() -> String {
     String::from("Bye")

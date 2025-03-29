@@ -1,26 +1,22 @@
-
 mod handler;
 mod model;
 mod route;
 mod schema;
 
-
-use std::sync::Arc;
+use axum::http::{
+    HeaderValue, Method,
+    header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
+};
 use dotenv::dotenv;
 use route::create_router;
-use axum::http::{
-    header::{ACCEPT, AUTHORIZATION, CONTENT_TYPE},
-    HeaderValue, Method
-};
+use std::sync::Arc;
 
-use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
+use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
 use tower_http::cors::CorsLayer;
-
 
 pub struct AppState {
     db: Pool<Postgres>,
 }
-
 
 #[tokio::main]
 async fn main() {
@@ -36,7 +32,7 @@ async fn main() {
         Ok(pool) => {
             println!("✅ Connection to the database is successful!");
             pool
-        },
+        }
         Err(err) => {
             println!("🔥 Failed to connect to the database: {:?}", err);
             std::process::exit(1);
@@ -55,5 +51,4 @@ async fn main() {
 
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8000").await.unwrap();
     axum::serve(listener, app).await.unwrap();
-
 }
