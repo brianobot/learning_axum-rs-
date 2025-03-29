@@ -1,0 +1,10 @@
+[package]
+name = "axum_websocket_example"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = "0.8.3"
+hyper = { version = "1.6.0", features = ["full"] }
+tokio = { version = "1.44.1", features = ["full"] }
+tower = "0.5.2"

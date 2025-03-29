@@ -6,12 +6,10 @@ pub struct FilterOptions {
     pub limit: Option<usize>,
 }
 
-
 #[derive(Deserialize, Debug)]
 pub struct ParamOptions {
-    pub id: String
+    pub id: String,
 }
-
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct CreateNoteSchema {
@@ -22,7 +20,6 @@ pub struct CreateNoteSchema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub published: Option<bool>,
 }
-
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct UpdateNoteSchema {
