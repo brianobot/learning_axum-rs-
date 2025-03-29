@@ -1,20 +1,18 @@
-use axum::{extract::State, http::StatusCode, response::IntoResponse, routing::get, Router};
+use axum::{Router, extract::State, http::StatusCode, response::IntoResponse, routing::get};
 
 pub mod logic;
 pub use logic::*;
 
-
 #[allow(unused)]
 #[derive(Clone, Debug)]
 struct AppState {
-    name: String
+    name: String,
 }
-
 
 #[tokio::main]
 async fn main() {
     let app_state = AppState {
-        name: "Test App".to_string()
+        name: "Test App".to_string(),
     };
 
     let app = Router::new()
@@ -28,22 +26,21 @@ async fn main() {
     axum::serve(listener, app).await.unwrap();
 }
 
-
 fn inner_route() -> Router<AppState> {
     // when using inner routes they must specify the state type to compose with the outer router
-    Router::new()
-        .route("/inner",  get(|State(state): State<AppState>| async move { 
-            println!("Inner Route State {:?}", state); 
-            "Inner route" 
-        }))
+    Router::new().route(
+        "/inner",
+        get(|State(state): State<AppState>| async move {
+            println!("Inner Route State {:?}", state);
+            "Inner route"
+        }),
+    )
 }
-
 
 async fn handler(State(state): State<AppState>) -> impl IntoResponse {
     println!("state: {:?}", state);
     (StatusCode::ACCEPTED, "Hello World!")
 }
-
 
 async fn home(State(state): State<AppState>) -> impl IntoResponse {
     println!("app state: {:?}", state);

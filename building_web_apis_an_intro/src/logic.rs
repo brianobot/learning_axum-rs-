@@ -1,6 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct TodoItem {
     pub title: String,
@@ -9,7 +8,6 @@ pub struct TodoItem {
     pub completed: bool,
 }
 
-
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct UpdateTodoItem {
     pub title: Option<String>,
@@ -17,7 +15,6 @@ pub struct UpdateTodoItem {
     pub assigned_to: Option<String>,
     pub completed: Option<bool>,
 }
-
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct IndentifyableTodoItem {
