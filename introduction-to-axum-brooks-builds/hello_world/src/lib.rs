@@ -9,4 +9,3 @@ pub async fn run() {
     println!("🚀 Server started on http://localhost:3000");
     axum::serve(listener, app).await.unwrap();
 }
-
