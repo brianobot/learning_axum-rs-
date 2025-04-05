@@ -1,4 +1,6 @@
 mod custom_headers;
+mod custom_status_code;
+mod custom_success_status_code;
 mod hello_world;
 mod mirror_body_json;
 mod mirror_body_string;
@@ -11,6 +13,8 @@ use axum::routing::{get, post};
 use axum::{Extension, Router, http, middleware};
 
 use custom_headers::{HeaderMessage, get_custom_headers, get_middleware_custom_headers};
+use custom_status_code::get_always_error;
+use custom_success_status_code::increment_counter;
 use hello_world::hello_world;
 use mirror_body_json::mirror_json;
 use mirror_body_string::mirror;
@@ -53,4 +57,6 @@ pub fn create_router() -> Router {
             "Message injected into the header".to_owned(),
         )))
         .layer(middleware::from_fn(extract_message_from_headers))
+        .route("/always_error", get(get_always_error))
+        .route("/increment_counter", post(increment_counter))
 }
