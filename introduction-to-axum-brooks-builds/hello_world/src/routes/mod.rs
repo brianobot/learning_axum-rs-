@@ -1,4 +1,7 @@
 mod custom_headers;
+mod custom_status_code;
+mod custom_success_status_code;
+mod get_json_response;
 mod hello_world;
 mod mirror_body_json;
 mod mirror_body_string;
@@ -6,11 +9,15 @@ mod mirror_path;
 mod query_param;
 mod request_headers;
 mod set_middleware_custom_headers;
+mod submit_data;
 
 use axum::routing::{get, post};
 use axum::{Extension, Router, http, middleware};
 
 use custom_headers::{HeaderMessage, get_custom_headers, get_middleware_custom_headers};
+use custom_status_code::get_always_error;
+use custom_success_status_code::increment_counter;
+use get_json_response::get_json_response;
 use hello_world::hello_world;
 use mirror_body_json::mirror_json;
 use mirror_body_string::mirror;
@@ -18,6 +25,7 @@ use mirror_path::mirror_path;
 use query_param::get_query_params;
 use request_headers::get_request_headers;
 use set_middleware_custom_headers::extract_message_from_headers;
+use submit_data::submit_user_data;
 use tower_http::cors::{Any, CorsLayer};
 
 #[derive(Clone)]
@@ -53,4 +61,8 @@ pub fn create_router() -> Router {
             "Message injected into the header".to_owned(),
         )))
         .layer(middleware::from_fn(extract_message_from_headers))
+        .route("/get_json", get(get_json_response))
+        .route("/submit_data", post(submit_user_data))
+        .route("/always_error", get(get_always_error))
+        .route("/increment_counter", post(increment_counter))
 }
