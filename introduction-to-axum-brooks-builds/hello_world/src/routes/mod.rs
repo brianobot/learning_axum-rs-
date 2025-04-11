@@ -1,3 +1,4 @@
+mod custom_extractor;
 mod custom_headers;
 mod custom_status_code;
 mod custom_success_status_code;
@@ -14,6 +15,7 @@ mod submit_data;
 use axum::routing::{get, post};
 use axum::{Extension, Router, http, middleware};
 
+use custom_extractor::custom_json_extractor;
 use custom_headers::{HeaderMessage, get_custom_headers, get_middleware_custom_headers};
 use custom_status_code::get_always_error;
 use custom_success_status_code::increment_counter;
@@ -63,6 +65,7 @@ pub fn create_router() -> Router {
         .layer(middleware::from_fn(extract_message_from_headers))
         .route("/get_json", get(get_json_response))
         .route("/submit_data", post(submit_user_data))
+        .route("/custom_json_extractor", post(custom_json_extractor))
         .route("/always_error", get(get_always_error))
         .route("/increment_counter", post(increment_counter))
 }
