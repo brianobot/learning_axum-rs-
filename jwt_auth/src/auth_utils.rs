@@ -17,49 +17,49 @@ pub struct User {
 
 pub struct Auth(User);
 
-#[async_trait]
-impl<S> FromRequestParts<S> for Auth
-where
-    S: Send + Sync,
-{
-    type Rejection = Response<String>;
+// #[async_trait]
+// impl<S> FromRequestParts<S> for Auth
+// where
+//     S: Send + Sync,
+// {
+//     type Rejection = Response<String>;
 
-    async fn from_request_parts(
-        parts: &mut axum::http::request::Parts,
-        _: &S,
-    ) -> Result<Self, Self::Rejection> {
-        let access_token = parts
-            .headers
-            .get(header::AUTHORIZATION)
-            .and_then(|value| value.to_str().ok())
-            .and_then(|str| str.split(" ").nth(1));
+//     async fn from_request_parts(
+//         parts: &mut axum::http::request::Parts,
+//         _: &S,
+//     ) -> Result<Self, Self::Rejection> {
+//         let access_token = parts
+//             .headers
+//             .get(header::AUTHORIZATION)
+//             .and_then(|value| value.to_str().ok())
+//             .and_then(|str| str.split(" ").nth(1));
 
-        match access_token {
-            Some(token) => {
-                let user_data = decode_jwt(token);
+//         match access_token {
+//             Some(token) => {
+//                 let user_data = decode_jwt(token);
 
-                match user_data {
-                    Ok(user) => Ok(Auth(user)),
-                    Err(e) => Err(Response::builder()
-                        .status(StatusCode::UNAUTHORIZED)
-                        .header(header::CONTENT_TYPE, "application/json")
-                        .body(
-                            json!({"success": false, "data": {"message": e.to_string()}})
-                                .to_string(),
-                        )
-                        .unwrap_or_default()),
-                }
-            }
-            None => Err(Response::builder()
-                .status(StatusCode::UNAUTHORIZED)
-                .header(header::CONTENT_TYPE, "application/json")
-                .body(
-                    json!({"success": false, "data": {"message": "no token provided"}}).to_string(),
-                )
-                .unwrap_or_default()),
-        }
-    }
-}
+//                 match user_data {
+//                     Ok(user) => Ok(Auth(user)),
+//                     Err(e) => Err(Response::builder()
+//                         .status(StatusCode::UNAUTHORIZED)
+//                         .header(header::CONTENT_TYPE, "application/json")
+//                         .body(
+//                             json!({"success": false, "data": {"message": e.to_string()}})
+//                                 .to_string(),
+//                         )
+//                         .unwrap_or_default()),
+//                 }
+//             }
+//             None => Err(Response::builder()
+//                 .status(StatusCode::UNAUTHORIZED)
+//                 .header(header::CONTENT_TYPE, "application/json")
+//                 .body(
+//                     json!({"success": false, "data": {"message": "no token provided"}}).to_string(),
+//                 )
+//                 .unwrap_or_default()),
+//         }
+//     }
+// }
 
 #[derive(Deserialize, Serialize)]
 pub struct Claims {
